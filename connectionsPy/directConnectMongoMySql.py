@@ -8,7 +8,6 @@ import mysql.connector
 import time
 
 # Single or mongo router (mongos)
-
 client = MongoClient('194.210.86.10',
 
                     username='aluno',
