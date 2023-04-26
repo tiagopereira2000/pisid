@@ -1,11 +1,6 @@
 import mysql
-from pymongo import MongoClient
-
-from datetime import datetime
-
-import mysql.connector
-
 import time
+from pymongo import MongoClient
 
 # Single or mongo router (mongos)
 client = MongoClient('194.210.86.10',
