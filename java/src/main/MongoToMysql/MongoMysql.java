@@ -17,53 +17,53 @@ public class MongoMysql {
     public static void main(String[] args) {
 
         // Connect to MongoDB
-        //TODO criar BD teste no mongo e uma coleção
         MongoClient mongoClient = MongoClients.create(); // vai criar o cliente na porta 27017
-        MongoDatabase mongoDatabase = mongoClient.getDatabase("myMongoDB");
-        MongoCollection<Document> mongoCollection = mongoDatabase.getCollection("myCollection");
+        MongoDatabase mongoDatabase = mongoClient.getDatabase("experiencia_ratos"); // TODO mudar o nome da BD para o que usam
+        //TODO mudar nome das coleções
+        MongoCollection<Document> temperaturas = mongoDatabase.getCollection("medicoes_sala");
+        MongoCollection<Document> movimentos = mongoDatabase.getCollection("medicoes_ratos");
 
-        // Connect to MySQL
-        Connection mysqlConnection = null;
-        String mysqlUrl = "jdbc:mysql://localhost:3306/mySqlDB";
 
-        //TODO Criar uma BD teste no mySQL congigurar o username e a password no file "my.ini" (XAMPP)
+        // Connect to MySQL user já criado no sql
+        String mysqlUrl = "jdbc:mysql://localhost:3306/experiencia_ratos"; //TODO substituir "experiencia_ratos" pelo nome que usaram para a BD
+        String mysqlUsername = "myuser";
+        String mysqlPassword = "mypassword";
 
-        String mysqlUsername = "myUsername";
-        String mysqlPassword = "myPassword";
         try {
-            mysqlConnection = DriverManager.getConnection(mysqlUrl, mysqlUsername, mysqlPassword);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+            Connection mysqlConnection = DriverManager.getConnection(mysqlUrl, mysqlUsername, mysqlPassword);
+            // Loop through MongoDB documents and insert into MySQL
+            MongoCursor<Document> cursorT = temperaturas.find().iterator();
+            while (cursorT.hasNext()) {
+                Document document = cursorT.next();
+                int id = document.getInteger("_id");
+                String hora = document.getString("hora");
+                double leitura = document.getDouble("leitura");
+                int sensor = document.getInteger("sensor");
 
-        // Loop through MongoDB documents and insert into MySQL
-        MongoCursor<Document> mongoCursor = mongoCollection.find().iterator();
-        while (mongoCursor.hasNext()) {
-            Document document = mongoCursor.next();
-            String id = document.get("_id").toString();
-            String name = document.getString("name");
-            int age = document.getInteger("age");
-            String address = document.getString("address");
+                String insertSql = "INSERT INTO mediçõessala (id, hora, leitura, sensor) VALUES (?, ?, ?, ?)";
+                try {
+                    PreparedStatement preparedStatement = mysqlConnection.prepareStatement(insertSql);
+                    preparedStatement.setInt(1, id);
+                    preparedStatement.setString(2, hora);
+                    preparedStatement.setDouble(3, leitura);
+                    preparedStatement.setInt(4, sensor);
+                    preparedStatement.executeUpdate();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
 
-            String insertSql = "INSERT INTO myTable (id, name, age, address) VALUES (?, ?, ?, ?)";
+
+            // Close MongoDB and MySQL connections
+            mongoClient.close();
             try {
-                PreparedStatement preparedStatement = mysqlConnection.prepareStatement(insertSql);
-                preparedStatement.setString(1, id);
-                preparedStatement.setString(2, name);
-                preparedStatement.setInt(3, age);
-                preparedStatement.setString(4, address);
-                preparedStatement.executeUpdate();
+                mysqlConnection.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-        }
-
-        // Close MongoDB and MySQL connections
-        mongoClient.close();
-        try {
-            mysqlConnection.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
     }
 }
