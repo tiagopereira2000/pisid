@@ -1,4 +1,5 @@
 //IMPORTS
+import com.mongodb.ConnectionString;
 import org.bson.Document;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoClient;
@@ -12,16 +13,17 @@ import java.sql.SQLException;
 //END IMPORTS
 
 
-public class MongoMysql {
+public class MainTemperatura {
 
     public static void main(String[] args) {
 
         // Connect to MongoDB
-        MongoClient mongoClient = MongoClients.create(); // vai criar o cliente na porta 27017
-        MongoDatabase mongoDatabase = mongoClient.getDatabase("experiencia_ratos"); // TODO mudar o nome da BD para o que usam
+        ConnectionString connectionString = new ConnectionString("mongodb://localhost:23017");
+        MongoClient mongoClient = MongoClients.create(connectionString);
+
+        MongoDatabase mongoDatabase = mongoClient.getDatabase("experiencia"); // TODO mudar o nome da BD para o que usam
         //TODO mudar nome das coleções
-        MongoCollection<Document> temperaturas = mongoDatabase.getCollection("medicoes_sala");
-        MongoCollection<Document> movimentos = mongoDatabase.getCollection("medicoes_ratos");
+        MongoCollection<Document> temperatura = mongoDatabase.getCollection("temperatura");
 
 
         // Connect to MySQL user já criado no sql
@@ -32,7 +34,7 @@ public class MongoMysql {
         try {
             Connection mysqlConnection = DriverManager.getConnection(mysqlUrl, mysqlUsername, mysqlPassword);
             // Loop through MongoDB documents and insert into MySQL
-            MongoCursor<Document> cursorT = temperaturas.find().iterator();
+            MongoCursor<Document> cursorT = temperatura.find().iterator();
             while (cursorT.hasNext()) {
                 Document document = cursorT.next();
                 int id = document.getInteger("_id");
@@ -40,8 +42,9 @@ public class MongoMysql {
                 double leitura = document.getDouble("leitura");
                 int sensor = document.getInteger("sensor");
 
-                String insertSql = "INSERT INTO mediçõessala (id, hora, leitura, sensor) VALUES (?, ?, ?, ?)";
+                String insertSql = "INSERT INTO mediçõestemperatura (id, hora, leitura, sensor) VALUES (?, ?, ?, ?)";
                 try {
+
                     PreparedStatement preparedStatement = mysqlConnection.prepareStatement(insertSql);
                     preparedStatement.setInt(1, id);
                     preparedStatement.setString(2, hora);
