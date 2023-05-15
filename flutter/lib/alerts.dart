@@ -8,8 +8,48 @@ import 'dart:async';
 import './readings1.dart';
 import './readings2.dart';
 import './readingsrooms.dart';
+import './home.dart';
 
+/*
+Fields:
 
+currentIndex: An integer representing the current index of the bottom navigation bar.
+timer: An instance of Timer used to periodically fetch alerts.
+selectedDate: A DateTime object representing the currently selected date.
+mostRecentAlert: An integer storing the most recent alert's index.
+tableFields: A list of strings representing the table column names.
+tableAlerts: A map storing alert data with integers as keys and lists of strings as values.
+_selectedIndex: An integer representing the currently selected index in the bottom navigation bar.
+
+Objectives:
+
+Display alerts in a tabular format.
+Fetch and update alerts periodically.
+Provide navigation between different pages based on the selected index in the bottom navigation bar.
+
+Methods:
+
+_onItemTapped: A method that is triggered when a bottom navigation bar item is tapped.
+  It updates the selected index and performs navigation based on the index value.
+
+initState: An overridden method that is called when the stateful widget is created.
+  It initializes the timer to periodically fetch alerts.
+
+build: An overridden method that builds the UI for the widget.
+  It displays a bottom navigation bar, a date picker, and a data table showing the alerts.
+
+selectDate: A method that shows a date picker dialog and updates the selected date when a new date is chosen.
+
+getAlerts: An asynchronous method that retrieves alerts from a server based on the selected date and stores them in the tableAlerts map.
+
+listAlerts: A method that generates a list of DataRow widgets representing the alerts to be displayed in the data table.
+
+listFields: A method that generates a list of DataColumn widgets representing the table column headers.
+
+dispose: An overridden method that cancels the timer when the stateful widget is disposed.
+  In summary, this code builds an alerts page in a Flutter application, providing a user interface to display alerts,
+  fetch new alerts periodically, and navigate to different pages based on user interaction.
+*/
 
 class Alerts extends StatelessWidget {
 //class Alerts extends StatefulWidget {
@@ -68,8 +108,13 @@ class AlertsMainState extends State<AlertsMain> {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const readingsrooms()),
-
       );}
+    if (index==3){
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const Home()),
+      );}
+
   }
 
 
@@ -108,7 +153,7 @@ class AlertsMainState extends State<AlertsMain> {
 
     bottomNavigationBar: BottomNavigationBar(
       //currentIndex:currentIndex,
-      //onTap:(index)=>setState(() => currentIndex = index),
+      //onTap:(index)=>setState(() => currentIndex = index), //trigger ativado quando um widget é pressionado
       iconSize:40,
       selectedFontSize:16,
       unselectedFontSize:16,
@@ -130,6 +175,11 @@ class AlertsMainState extends State<AlertsMain> {
           icon:Icon(Icons.gesture),
           label:'Mouses/Room',
           backgroundColor:Colors.blue,
+        ),
+        BottomNavigationBarItem(
+            icon:Icon(Icons.home),
+            label:"Home",
+            backgroundColor: Colors.blue,
         ),
       ],
         type: BottomNavigationBarType.shifting,
@@ -172,7 +222,7 @@ class AlertsMainState extends State<AlertsMain> {
     if (response.statusCode == 200) {
 
       var jsonData = json.decode(response.body);
-      var alerts = jsonData["alerts"];;
+      var alerts = jsonData["alerts"];
       if (alerts != null && alerts.length > 0) {
         setState(() {
           tableAlerts.clear();

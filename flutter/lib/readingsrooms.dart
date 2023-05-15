@@ -7,6 +7,39 @@ import 'dart:async';
 import 'dart:math';
 import 'dart:io';
 
+/*
+Fields:
+
+showingTooltip: An integer representing the index of the currently selected bar on the chart.
+timer: An instance of Timer used to periodically fetch readings.
+readingsValues: A list of double values representing the readings for each bar.
+readingsTimes: A list of double values representing the corresponding times for each bar.
+minY: A double value representing the minimum y-axis value on the chart.
+maxY: A double value representing the maximum y-axis value on the chart.
+
+Objectives:
+
+Display bar chart readings for a specific context.
+Fetch and update readings periodically.
+Allow interaction with the chart to show tooltips.
+Methods:
+
+initState: An overridden method called when the stateful widget is created. It initializes the timer to periodically fetch readings.
+
+generateGroupData: A method that generates a BarChartGroupData object representing a single bar on the chart.
+
+build: An overridden method that builds the UI for the widget.
+ It displays a bar chart using the fl_chart library and updates the chart with fetched readings.
+
+getReadings: An asynchronous method that retrieves readings from a server and updates the chart's data accordingly.
+
+dispose: An overridden method that cancels the timer when the stateful widget is disposed.
+
+In summary, this code builds a page in a Flutter application that displays bar chart readings for a specific context.
+ It periodically fetches new readings, updates the chart accordingly,
+ and allows interaction with the chart by showing tooltips for each bar.
+*/
+
 
 class readingsrooms extends StatelessWidget {
   const readingsrooms({Key? key}) : super(key: key);
@@ -64,8 +97,8 @@ class _MyHomePageState extends State<ReadingsMain> {
 
   @override
   Widget build(BuildContext context) {
-    getReadings();
-    //sleep(Duration(seconds:2));
+    getReadings();  // lê os primeiros 8 valores de movimentos.
+    sleep(const Duration(seconds:1));
     return Scaffold(
       body: Center(
         child: Padding(
