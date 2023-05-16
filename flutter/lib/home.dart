@@ -57,23 +57,27 @@ class _MyHomePageState extends State<ReadingsMain> {
     String? ip = prefs.getString('ip');
     String? port = prefs.getString('port');
     final conn = await MySqlConnection.connect(ConnectionSettings(
-      host: '127.0.0.1',
+      host: 'localhost',
       port: int.parse(port!),
       user: username!,
       password: password!,
       db: 'pisid_new',
     ));
 
-    final results = await conn.query('SELECT IDexperiencia, Descrição FROM experiencia');
-    for (var row in results) {
-      items.add(row['Descrição'].toString());
+    try{
+      final results = await conn.query("SELECT Descrição FROM experiencia WHERE Investigador='root@localhost'");
+      for (var row in results) {
+        items.add(row['Descrição'].toString());
+
+      }
+    }catch(e){
+      print("Error executing SQL query: $e");
     }
 
     await conn.close();
 
     setState(() {});
   }
-
 
 
   @override

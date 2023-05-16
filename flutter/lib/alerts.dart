@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'dart:async';
 
 //import 'package:ionicons/ionicons.dart';
 import 'dart:convert';
-import 'dart:async';
 import './readings1.dart';
 import './readings2.dart';
 import './readingsrooms.dart';
@@ -52,7 +52,6 @@ dispose: An overridden method that cancels the timer when the stateful widget is
 */
 
 class Alerts extends StatelessWidget {
-//class Alerts extends StatefulWidget {
   const Alerts({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -82,14 +81,13 @@ class AlertsMainState extends State<AlertsMain> {
   DateTime selectedDate = DateTime.now();
   var mostRecentAlert = 0;
 
-  var tableFields = ['Mensagem', 'Leitura', 'Sala', 'Sensor', 'TipoAlerta', 'Hora', 'HoraEscrita'];
+  var tableFields = ['Mensagem', 'Leitura', 'Sala', 'Sensor', 'TipoAlerta', 'Hora'];
   var tableAlerts = <int, List<String>>{};
 
   int _selectedIndex = 0;
   Future<void> _onItemTapped(int index) async {
     setState(() {
       _selectedIndex = index;
-
     });
     mostRecentAlert = 0;
     tableAlerts.clear();
@@ -213,14 +211,11 @@ class AlertsMainState extends State<AlertsMain> {
     String? username = prefs.getString('username');
     String? ip = prefs.getString('ip');
     String? port = prefs.getString('port');
-    String date =
-        "${selectedDate.year}-${selectedDate.month}-${selectedDate.day}";
+    String date = "${selectedDate.year}-${selectedDate.month}-${selectedDate.day}";
 
     String alertsURL = "http://" + ip! + ":" + port! + "/scripts/getAlerts.php";
-    var response = await http
-        .post(Uri.parse(alertsURL), body: {'username': username, 'date': date});
+    var response = await http.post(Uri.parse(alertsURL), body: {'username': username, 'date': date});
     if (response.statusCode == 200) {
-
       var jsonData = json.decode(response.body);
       var alerts = jsonData["alerts"];
       if (alerts != null && alerts.length > 0) {
@@ -228,8 +223,7 @@ class AlertsMainState extends State<AlertsMain> {
           tableAlerts.clear();
           for (var i = 0; i < alerts.length; i++) {
             Map<String, dynamic> alert = alerts[i];
-            int timeKey = int.parse(
-                alert["Hora"].toString().split(" ")[1].replaceAll(":", ""));
+            int timeKey = int.parse(alert["Hora"].toString().split(" ")[1].replaceAll(":", ""));
             var alertValues = <String>[];
             for (var key in alert.keys) {
               if (alert[key] == null) {

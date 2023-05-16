@@ -126,8 +126,7 @@ class ReadingsMainState extends State<ReadingsMain> {
     String? port = prefs.getString('port');
 
     String readingsURL = "http://" + ip! + ":" + port! + "/scripts/getTemp1.php";
-    var response = await http
-        .post(Uri.parse(readingsURL), body: {'username': username, 'password': password});
+    var response = await http.post(Uri.parse(readingsURL), body: {'username': username, 'password': password});
 
     if (response.statusCode == 200) {
       var jsonData = json.decode(response.body);

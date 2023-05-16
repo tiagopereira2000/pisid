@@ -77,10 +77,10 @@ class _MyHomePageState extends State<ReadingsMain> {
     timer = Timer.periodic(interval, (Timer t) => getReadings());
     super.initState();
   }
-  var readingsValues = <double>[];
-  var readingsTimes = <double>[];
-  var minY = 0.0;
-  var maxY = 100.0;
+  var readingsMouses = <int>[];
+  var readingsRoom = <int>[];
+  var minY = 0;
+  var maxY = 25;
 
 
 
@@ -97,8 +97,8 @@ class _MyHomePageState extends State<ReadingsMain> {
 
   @override
   Widget build(BuildContext context) {
-    getReadings();  // lê os primeiros 8 valores de movimentos.
-    sleep(const Duration(seconds:1));
+    //getReadings();  // lê os primeiros 8 valores de movimentos.
+    //sleep(const Duration(seconds:1));
     return Scaffold(
       body: Center(
         child: Padding(
@@ -108,15 +108,15 @@ class _MyHomePageState extends State<ReadingsMain> {
             child: BarChart(
               BarChartData(
                 barGroups: [
-                  generateGroupData(readingsTimes[0].toInt(),readingsValues[0].toInt()),
-                  generateGroupData(readingsTimes[1].toInt(),readingsValues[1].toInt()),
-                  generateGroupData(readingsTimes[2].toInt(),readingsValues[2].toInt()),
-                  generateGroupData(readingsTimes[3].toInt(),readingsValues[3].toInt()),
-                  generateGroupData(readingsTimes[4].toInt(),readingsValues[4].toInt()),
-                  generateGroupData(readingsTimes[5].toInt(),readingsValues[5].toInt()),
-                  generateGroupData(readingsTimes[6].toInt(),readingsValues[6].toInt()),
-                  generateGroupData(readingsTimes[7].toInt(),readingsValues[7].toInt()),
-                  generateGroupData(readingsTimes[8].toInt(),readingsValues[8].toInt()),
+                  generateGroupData(readingsRoom[0].toInt(),readingsMouses[0].toInt()),
+                  generateGroupData(readingsRoom[1].toInt(),readingsMouses[1].toInt()),
+                  // generateGroupData(readingsRoom[2].toInt(),readingsMouses[2].toInt()),
+                  // generateGroupData(readingsRoom[3].toInt(),readingsMouses[3].toInt()),
+                  // generateGroupData(readingsRoom[4].toInt(),readingsMouses[4].toInt()),
+                  // generateGroupData(readingsRoom[5].toInt(),readingsMouses[5].toInt()),
+                  // generateGroupData(readingsRoom[6].toInt(),readingsMouses[6].toInt()),
+                  // generateGroupData(readingsRoom[7].toInt(),readingsMouses[7].toInt()),
+                  // generateGroupData(readingsRoom[8].toInt(),readingsMouses[8].toInt()),
                 ],
                 barTouchData: BarTouchData(
                     enabled: true,
@@ -148,10 +148,10 @@ class _MyHomePageState extends State<ReadingsMain> {
         bottomNavigationBar: BottomAppBar(
           child: ElevatedButton(
             onPressed: () {
-              readingsValues.clear();
-              readingsTimes.clear();
-              minY = 0.0;
-              maxY = 100.0;
+              readingsRoom.clear();
+              readingsMouses.clear();
+              minY = 0;
+              maxY = 25;
               Navigator.pop(context);
             },
             child: const Text('Alerts'),
@@ -166,29 +166,32 @@ class _MyHomePageState extends State<ReadingsMain> {
     String? ip = prefs.getString('ip');
     String? port = prefs.getString('port');
     String readingsURL = "http://" + ip! + ":" + port! + "/scripts/getMousesRoom.php";
-    var response = await http
-        .post(Uri.parse(readingsURL), body: {'username': username, 'password': password});
+    var response = await http.post(Uri.parse(readingsURL), body: {'username': username, 'password': password});
 
     if (response.statusCode == 200) {
       var jsonData = json.decode(response.body);
       var data = jsonData["readings"];
       setState(() {
-        readingsValues.clear();
-        readingsTimes.clear();
+        readingsMouses.clear();
+        readingsRoom.clear();
         minY = 0;
-        maxY = 100;
+        maxY = 25;
 
         if (data != null && data.length > 0) {
           for (var reading in data) {
-            double readingTime = double.parse(reading["Room"].toString());
-            var value = double.parse(reading["TotalMouses"].toString());
+            //double readingTime = double.parse(reading["Room"].toString());
+            //var value = double.parse(reading["TotalMouses"].toString());
+            var room = int.parse(reading["Room"].toString());
+            var numRatos = int.parse(reading["TotalMouses"].toString());
             //print("VALUE: " + value.toString());
-            readingsTimes.add(readingTime);
-            readingsValues.add(value);
+            // readingsTimes.add(readingTime);
+            // readingsValues.add(value);
+            readingsRoom.add(room);
+            readingsMouses.add(numRatos);
           }
-          if (readingsValues.isNotEmpty) {
-            minY = readingsValues.reduce(min)-1;
-            maxY = readingsValues.reduce(max)+1;
+          if (readingsMouses.isNotEmpty) {
+            minY = readingsMouses.reduce(min)-1;
+            maxY = readingsMouses.reduce(max)+1;
           }
         }
       });
