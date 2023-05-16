@@ -46,8 +46,8 @@ class _MyHomePageState extends State<ReadingsMain> {
   @override
   void initState() {
     // TODO: implement initState
-    super.initState();
     fetchExperimentNames();
+    super.initState();
   }
 
   Future<void> fetchExperimentNames() async {
@@ -56,27 +56,21 @@ class _MyHomePageState extends State<ReadingsMain> {
     String? password = prefs.getString('password');
     String? ip = prefs.getString('ip');
     String? port = prefs.getString('port');
-    final conn = await MySqlConnection.connect(ConnectionSettings(
-      host: 'localhost',
-      port: int.parse(port!),
-      user: username!,
-      password: password!,
-      db: 'pisid_new',
-    ));
+    String readingsURL = "http://" + ip! + ":" + port! + "/scripts/getExperimentsFromUser.php";
+    var response = await http.post(Uri.parse(readingsURL), body: {'username': username, 'password': password});
+    if (response.statusCode == 200) {
+      var jsonData = json.decode(response.body);
+      var data = jsonData["experiments"];
 
-    try{
-      final results = await conn.query("SELECT Descrição FROM experiencia WHERE Investigador='root@localhost'");
-      for (var row in results) {
-        items.add(row['Descrição'].toString());
-
-      }
-    }catch(e){
-      print("Error executing SQL query: $e");
+      setState(() {
+        if (data != null && data.length > 0) {
+          for (var reading in data) {
+            items.add(reading["Descricao"].toString());
+          }
+        }
+      });
     }
 
-    await conn.close();
-
-    setState(() {});
   }
 
 
@@ -102,7 +96,7 @@ class _MyHomePageState extends State<ReadingsMain> {
               itemBuilder: (context, index) {
                 return CheckboxListTile(
                   title: Text(items[index]),
-                  value: checkedItems[index],
+                  value: true,
                   onChanged: (bool? value) {
                     setState(() {
                       checkedItems[index] = value!;
