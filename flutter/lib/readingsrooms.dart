@@ -171,6 +171,7 @@ class _MyHomePageState extends State<ReadingsMain> {
     if (response.statusCode == 200) {
       var jsonData = json.decode(response.body);
       var data = jsonData["readings"];
+
       setState(() {
         readingsMouses.clear();
         readingsRoom.clear();
@@ -193,8 +194,8 @@ class _MyHomePageState extends State<ReadingsMain> {
             minY = readingsMouses.reduce(min)-1;
             maxY = readingsMouses.reduce(max)+1;
           }
-        }
-      });
+        }// fi
+      }); //setState
     }
-  }
+  } //getReadings
 }

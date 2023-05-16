@@ -158,6 +158,8 @@ class LoginFormState extends State<LoginForm> {
         await prefs.setString('password', passwordController.text.trim());
         await prefs.setString('ip', ipController.text.trim());
         await prefs.setString('port', portController.text.trim());
+        await prefs.setString('experienceID', '');
+        await prefs.setBool('isExperienceActive', false);
 
         Navigator.pushReplacement(
           context,
