@@ -44,7 +44,7 @@ class ReadingsMainState extends State<ReadingsMain> {
   var readingsTimes = <double>[];
   var minY = 10.0;
   var maxY = 30.0;
-  double timeLimit = 3;
+  double timeLimit = 5;
 
   @override
   void initState() {
@@ -134,8 +134,8 @@ class ReadingsMainState extends State<ReadingsMain> {
       setState(() {
         readingsValues.clear();
         readingsTimes.clear();
-        minY = 10.0;
-        maxY = 30.0;
+        minY = 0.0;
+        maxY = 25.0;
         if (data != null && data.length > 0) {
           for (var reading in data) {
             DateTime readingTime = DateTime.parse(reading["Hora"].toString());
@@ -158,7 +158,6 @@ class ReadingsMainState extends State<ReadingsMain> {
         }
       });
     }
-    print(" ");
   }
 
   listReadings() {

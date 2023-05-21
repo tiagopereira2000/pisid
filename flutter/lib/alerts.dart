@@ -209,12 +209,13 @@ class AlertsMainState extends State<AlertsMain> {
   getAlerts() async {
     final prefs = await SharedPreferences.getInstance();
     String? username = prefs.getString('username');
+    String? password = prefs.getString('password');
     String? ip = prefs.getString('ip');
     String? port = prefs.getString('port');
     String date = "${selectedDate.year}-${selectedDate.month}-${selectedDate.day}";
-
     String alertsURL = "http://" + ip! + ":" + port! + "/scripts/getAlerts.php";
-    var response = await http.post(Uri.parse(alertsURL), body: {'username': username, 'date': date});
+
+    var response = await http.post(Uri.parse(alertsURL), body: {'username': username, 'password': password ,'date': date});
     if (response.statusCode == 200) {
       var jsonData = json.decode(response.body);
       var alerts = jsonData["alerts"];

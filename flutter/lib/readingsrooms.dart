@@ -110,13 +110,14 @@ class _MyHomePageState extends State<ReadingsMain> {
                 barGroups: [
                   generateGroupData(readingsRoom[0].toInt(),readingsMouses[0].toInt()),
                   generateGroupData(readingsRoom[1].toInt(),readingsMouses[1].toInt()),
-                  // generateGroupData(readingsRoom[2].toInt(),readingsMouses[2].toInt()),
-                  // generateGroupData(readingsRoom[3].toInt(),readingsMouses[3].toInt()),
-                  // generateGroupData(readingsRoom[4].toInt(),readingsMouses[4].toInt()),
-                  // generateGroupData(readingsRoom[5].toInt(),readingsMouses[5].toInt()),
-                  // generateGroupData(readingsRoom[6].toInt(),readingsMouses[6].toInt()),
-                  // generateGroupData(readingsRoom[7].toInt(),readingsMouses[7].toInt()),
-                  // generateGroupData(readingsRoom[8].toInt(),readingsMouses[8].toInt()),
+                  generateGroupData(readingsRoom[2].toInt(),readingsMouses[2].toInt()),
+                  generateGroupData(readingsRoom[3].toInt(),readingsMouses[3].toInt()),
+                  generateGroupData(readingsRoom[4].toInt(),readingsMouses[4].toInt()),
+                  generateGroupData(readingsRoom[5].toInt(),readingsMouses[5].toInt()),
+                  generateGroupData(readingsRoom[6].toInt(),readingsMouses[6].toInt()),
+                  generateGroupData(readingsRoom[7].toInt(),readingsMouses[7].toInt()),
+                  generateGroupData(readingsRoom[8].toInt(),readingsMouses[8].toInt()),
+                  generateGroupData(readingsRoom[9].toInt(),readingsMouses[9].toInt()),
                 ],
                 barTouchData: BarTouchData(
                     enabled: true,
@@ -151,7 +152,7 @@ class _MyHomePageState extends State<ReadingsMain> {
               readingsRoom.clear();
               readingsMouses.clear();
               minY = 0;
-              maxY = 25;
+              maxY = 40;
               Navigator.pop(context);
             },
             child: const Text('Alerts'),
@@ -173,26 +174,18 @@ class _MyHomePageState extends State<ReadingsMain> {
       var data = jsonData["readings"];
 
       setState(() {
+        minY = 0;
+        maxY = 40;
         readingsMouses.clear();
         readingsRoom.clear();
-        minY = 0;
-        maxY = 25;
 
         if (data != null && data.length > 0) {
           for (var reading in data) {
-            //double readingTime = double.parse(reading["Room"].toString());
-            //var value = double.parse(reading["TotalMouses"].toString());
             var room = int.parse(reading["Room"].toString());
             var numRatos = int.parse(reading["TotalMouses"].toString());
-            //print("VALUE: " + value.toString());
-            // readingsTimes.add(readingTime);
-            // readingsValues.add(value);
+            print("VALUE: " + numRatos.toString());
             readingsRoom.add(room);
             readingsMouses.add(numRatos);
-          }
-          if (readingsMouses.isNotEmpty) {
-            minY = readingsMouses.reduce(min)-1;
-            maxY = readingsMouses.reduce(max)+1;
           }
         }// fi
       }); //setState

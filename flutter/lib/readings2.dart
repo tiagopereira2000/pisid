@@ -42,9 +42,9 @@ class ReadingsMainState extends State<ReadingsMain> {
   late Timer timer;
   var readingsValues = <double>[];
   var readingsTimes = <double>[];
-  var minY = 10.0;
+  var minY = 0.0;
   var maxY = 30.0;
-  double timeLimit = 3;
+  double timeLimit = 5;
 
   @override
   void initState() {
@@ -126,8 +126,7 @@ class ReadingsMainState extends State<ReadingsMain> {
     String? port = prefs.getString('port');
 
     String readingsURL = "http://" + ip! + ":" + port! + "/scripts/getTemp2.php";
-    var response = await http
-        .post(Uri.parse(readingsURL), body: {'username': username, 'password': password});
+    var response = await http.post(Uri.parse(readingsURL), body: {'username': username, 'password': password});
 
     if (response.statusCode == 200) {
       var jsonData = json.decode(response.body);
@@ -135,8 +134,8 @@ class ReadingsMainState extends State<ReadingsMain> {
       setState(() {
         readingsValues.clear();
         readingsTimes.clear();
-        minY = 10.0;
-        maxY = 30.0;
+        minY = 0.0;
+        maxY = 25.0;
         if (data != null && data.length > 0) {
           for (var reading in data) {
             DateTime readingTime = DateTime.parse(reading["Hora"].toString());
@@ -159,7 +158,6 @@ class ReadingsMainState extends State<ReadingsMain> {
         }
       });
     }
-    print(" ");
   }
 
   listReadings() {
